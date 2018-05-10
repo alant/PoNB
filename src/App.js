@@ -1,14 +1,55 @@
 import React, { Component } from 'react';
-import Button from 'antd/lib/button';
 import './App.css';
 import NebPay from 'nebpay/nebpay.js';
+import {  
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink} from 'reactstrap';
+import { Link, Route } from 'react-router-dom';
+import NewTeam from './CreateANewTeam';
+
+/* Home component */
+const Home = () => (
+  <div>
+    <h2>home</h2>
+  </div>
+)
+
+/* Leaderboard component */
+const Leaderboard = () => (
+  <div>
+    <h2>Leaderboard</h2>
+  </div>
+)
+
+const contractAddr = "n1simWmMDk8mgy92n2GArN6hh2UJPdUfexP"
+
+const MyNewTeam = (props) => {
+  return (
+    <NewTeam 
+      contractAddr={contractAddr}
+      {...props}
+    />
+  );
+}
 
 class App extends Component {
   constructor() {
     super();
+    this.toggle = this.toggle.bind(this);
     this.state = {
-      extensionState: "loading"
+      extensionState: "loading",
+      isOpen: false
     }
+  }
+  toggle() {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
   }
   componentWillMount() {
     if (typeof(webExtensionWallet) === "undefined") {
@@ -19,31 +60,43 @@ class App extends Component {
       this.setState({ extensionState: "found" });
     }
   }
-  checkStatus() {
-    console.log("click happened");
-    var nebPay = new NebPay();
-    var dappAddress = "n1tMicsrXs7m3fmtywC9zjMDVUBYJBAg5p3";
-    var to = dappAddress;
-    var value = "0";
-    var callFunction = "getCount";
-    var callArgs = "[]"; //in the form of ["args"]
-    nebPay.simulateCall(to, value, callFunction, callArgs, {    //使用nebpay的simulateCall接口去执行get查询, 模拟执行.不发送交易,不上链
-        listener: this.callReturn
-    });
-  }
-  callReturn(resp) {
-    console.log("response of getCount: " + JSON.stringify(resp.result));
-  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <Button onClick={this.checkStatus.bind(this)} type="primary">Button</Button>
+        <div className="container">
+          <Navbar color="light" light expand="md">
+            <NavbarBrand href="/">PoNB</NavbarBrand>
+            <NavbarToggler onClick={this.toggle} />
+            <Collapse isOpen={this.state.isOpen} navbar>
+              <Nav className="ml-auto" navbar>
+                <NavItem>
+                  <NavLink>
+                    <Link to="/leaderboard">Leaderboard</Link> 
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink>
+                    <Link to="/createANewTeam">Create a new team</Link>
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink>My team</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink>About</NavLink>
+                </NavItem>
+              </Nav>
+            </Collapse>
+          </Navbar>
+         
+          <div className="jumbotron">
+            <Route exact={true} path="/" component={Home}/>
+            <Route path="/leaderboard" component={Leaderboard}/>
+            <Route path="/createANewTeam" render={MyNewTeam}/>
+          </div>
+          
+        </div> 
       </div>
     );
   }
