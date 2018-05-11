@@ -26,7 +26,7 @@ const Leaderboard = () => (
   </div>
 )
 
-const contractAddr = "n1simWmMDk8mgy92n2GArN6hh2UJPdUfexP"
+const contractAddr = "n1nDsG7xY6mtRdRTbjMhr7TgBwTMLPQJiDh"
 
 const MyNewTeam = (props) => {
   return (

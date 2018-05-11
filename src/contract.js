@@ -108,12 +108,12 @@ var PoNBContract  = function () {
         }
     });
     LocalContractStorage.defineProperties(this, {
-      depositRequirement: BigNumber, 
-      rewardPercent: 0,
-      rewardPool: 0,
-      devFund: BigNumber,
-      daBoss: "",
-      teamNames: []
+      depositRequirement: null, 
+      rewardPercent: null,
+      rewardPool: null,
+      devFund: null,
+      daBoss: null,
+      teamNames: null
     });
 };
 
@@ -122,13 +122,13 @@ PoNBContract.prototype = {
     var dReq = new BigNumber(10000000000000000);// 0.01 NAS
     var teamNamesArray = [];
     var rPecent = 0.05;
-    var rPool = new BigNumber(0);
     var dFund = new BigNumber(0);
     var bigBoss = "n1UziJREeLNgTQPDK8AAfZdutJdBvHVhXQ5";
+    
     this.depositRequirement = dReq;
     this.teamNames = teamNamesArray;
     this.rewardPercent = rPecent;
-    this.rewardPool = rPool;
+    this.rewardPool = new BigNumber(0);
     this.devFund = dFund;
     this.daBoss = bigBoss;
   },
@@ -166,7 +166,8 @@ PoNBContract.prototype = {
     this.team.put(teamName, nbTeam);
   
     var prizeMoney = contribution.times(0.5);
-    var rewardBalance = this.rewardPool;
+    var rewardMoney = new BigNumber(this.rewardPool);
+    this.rewardPool = rewardMoney.plus(prizeMoney);
     // rewardBalance.plus(prizeMoney);
     // this.rewardPool = rewardBalance;
 
