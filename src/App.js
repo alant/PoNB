@@ -11,6 +11,7 @@ import {
   NavLink} from 'reactstrap';
 import { Link, Route } from 'react-router-dom';
 import NewTeam from './CreateANewTeam';
+import MyTeam from './MyTeam';
 
 /* Home component */
 const Home = () => (
@@ -26,7 +27,7 @@ const Leaderboard = () => (
   </div>
 )
 
-const contractAddr = "n1nDsG7xY6mtRdRTbjMhr7TgBwTMLPQJiDh"
+const contractAddr = "n1s221Q2vCv1qrYhv9F9TrSTHj8XUVsLuQa"
 
 const MyNewTeam = (props) => {
   return (
@@ -36,6 +37,16 @@ const MyNewTeam = (props) => {
     />
   );
 }
+
+const MyMyTeam = (props) => {
+  return (
+    <MyTeam 
+      contractAddr={contractAddr}
+      {...props}
+    />
+  );
+}
+
 
 class App extends Component {
   constructor() {
@@ -81,7 +92,9 @@ class App extends Component {
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink>My team</NavLink>
+                  <NavLink>
+                   <Link to="/myTeam">My team</Link>
+                  </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink>About</NavLink>
@@ -94,6 +107,7 @@ class App extends Component {
             <Route exact={true} path="/" component={Home}/>
             <Route path="/leaderboard" component={Leaderboard}/>
             <Route path="/createANewTeam" render={MyNewTeam}/>
+            <Route path="/myTeam" render={MyMyTeam}/>
           </div>
           
         </div> 

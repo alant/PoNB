@@ -29,7 +29,7 @@ class NewTeam extends Component {
     var callFunction = "newTeam";
     var callArgs = "[\"" + this.state.teamName + "\",\"" + this.state.mgrName + "\"]"; 
     this.state.nebPay.call(to, value, callFunction, callArgs, {
-        listener: this.setReturn
+        listener: this.callReturn
     });
   }
   callReturn(resp) {
