@@ -1,49 +1,84 @@
 import React, { Component } from 'react';
-import NebPay from 'nebpay/nebpay.js';
-import TeamItem from './TeamItem';
+import NebPay from 'nebpay.js/nebpay.js';
+import { Table } from 'reactstrap';
+import BigNumber from 'bignumber.js';
 
 class Leaderboard extends Component {
   constructor() {
     super();
     this.state = {
       nebPay: null,
-      to: "",
-      teams: []
+      to: "",//contract address
+      members: []
     }
   }
   componentWillMount() {
     this.setState({nebPay: new NebPay()});
     this.setState({to: this.props.contractAddr});
   }
-  componentDidMount() {
-    console.log("Leaderboard using contract addr: " + this.props.contractAddr);
-    var value = "0";
-    var callFunction = "getTeamNames";
-    var callArgs = "[]";
-    this.state.nebPay.simulateCall(this.state.to, value, callFunction, callArgs, {
-        listener: this.callReturn1.bind(this)
-    });
-  }
-  callReturn1(resp) {
-    console.log(resp.result);
-    var result = JSON.parse(resp.result);
-    result.names.map((team) => {
-      var value = "0";
-      var callFunction = "getTeam";
-      var callArgs = "[\"" + team + "\"]";
-      this.state.nebPay.simulateCall(this.state.to, value, callFunction, callArgs, {
-          listener: this.callReturn2
+  promiseSimulateCall(to, value, callFunction, callArgs) {
+    return new Promise((resolve, reject) => {
+      this.state.nebPay.simulateCall(to, value, callFunction, callArgs, {
+        listener: (resp) => {
+          if (resp == null || resp.execute_err !== "") {
+            reject(Error("promiseSimulateCall broke"));
+          } else {
+            resolve(resp);
+          }
+        }
       });
     });
   }
-  callReturn2(resp) {
-    console.log("= callReturn2: " + resp.result);
+  componentDidMount() {
+    console.log("=Leaderboard contract addr: " + this.props.contractAddr);
+    var value = "0";
+    var callFunction = "getTeam";
+    var callArgs = "[]";
+    this.promiseSimulateCall(this.state.to, value, callFunction, callArgs)
+    .then(resp => {
+      console.log("=pSCall1 result:" + JSON.stringify(resp));
+      var result = JSON.parse(resp.result);
+      var pArray = result.members.map((addr) => {
+        var value = "0";
+        var callFunction = "getBalance";
+        var callArgs = "[\"" + addr + "\"]";
+        return this.promiseSimulateCall(this.state.to, value, callFunction, callArgs);
+      });
+      var promises = Promise.all(pArray);
+      promises.then(results => {
+        // console.log("==promiseall:" + JSON.stringify(results));
+        var stateMembers = [];
+        for (var i = 0; i < result.members.length; i++)
+        {
+          var bigB = new BigNumber(JSON.parse(results[i].result));
+          var bigBDenom = new BigNumber("1000000000000000000");
+          // console.log("=bigB:" + bigB + ", bigBDenom: " + bigBDenom);
+          bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
+          stateMembers.push({ addr: result.members[i], balance: bigB.toString() });
+        }
+        this.setState({members: stateMembers});
+      });
+    });
+    
   }
   render() {
+    const Members = this.state.members.map((member, i) => {
+      return (<tr key={i}><td>{member.addr}</td><td>{member.balance}</td></tr>);
+    });
     return (
       <div>
-        coming soon
-        {/* <TeamItem teams={this.state.teams} /> */}
+        <span>{"Here you see each person's balance"}</span>
+        <Table>
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Balance (NAS)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Members}
+          </tbody>
+        </Table>
       </div>
     )
   }

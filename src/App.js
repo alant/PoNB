@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import NebPay from 'nebpay/nebpay.js';
 import {  
   Collapse,
   Navbar,
@@ -10,31 +9,22 @@ import {
   NavItem,
   NavLink} from 'reactstrap';
 import { Link, Route } from 'react-router-dom';
-import NewTeam from './CreateANewTeam';
-import MyTeam from './MyTeam';
+import GamePlay from './GamePlay';
 import Leaderboard from './Leaderboard';
 
 /* Home component */
 const Home = () => (
   <div>
-    <h2>home</h2>
+    <h2>Proof of Niubility</h2>
+    <p>这是一个基于星云（Nebulas）的小游戏，进入游戏的方法是点击右上角的 “<Link to="/gamePlay">Play The Game</Link>"。 最小投入 0.01 NAS。 投入以后，在您后面进入游戏的玩家投入的 10% 会根据您的余额在游戏里的占比分配给您。您就牛逼了！Proof of Niubility!</p>
   </div>
 )
 
-const contractAddr = "n1vopYUANXnVg6yFAScKQcrtVN1vgt5Uh4a"
+const contractAddr = "n21QT3oy5D2cfUe2M1h3ym7JLtsxxm4AKQL"
 
-const MyNewTeam = (props) => {
+const MyGamePlay = (props) => {
   return (
-    <NewTeam 
-      contractAddr={contractAddr}
-      {...props}
-    />
-  );
-}
-
-const MyMyTeam = (props) => {
-  return (
-    <MyTeam 
+    <GamePlay 
       contractAddr={contractAddr}
       {...props}
     />
@@ -91,12 +81,7 @@ class App extends Component {
                 </NavItem>
                 <NavItem>
                   <NavLink>
-                    <Link to="/createANewTeam">Create a new team</Link>
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink>
-                   <Link to="/myTeam">My team</Link>
+                    <Link to="/gamePlay">Play The Game</Link>
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -109,8 +94,7 @@ class App extends Component {
           <div className="jumbotron">
             <Route exact={true} path="/" component={Home}/>
             <Route path="/leaderboard" component={MyLeaderboard}/>
-            <Route path="/createANewTeam" render={MyNewTeam}/>
-            <Route path="/myTeam" render={MyMyTeam}/>
+            <Route path="/gamePlay" render={MyGamePlay}/>
           </div>
           
         </div> 
