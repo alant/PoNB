@@ -12,6 +12,7 @@ import {
 import { Link, Route } from 'react-router-dom';
 import NewTeam from './CreateANewTeam';
 import MyTeam from './MyTeam';
+import Leaderboard from './Leaderboard';
 
 /* Home component */
 const Home = () => (
@@ -20,14 +21,7 @@ const Home = () => (
   </div>
 )
 
-/* Leaderboard component */
-const Leaderboard = () => (
-  <div>
-    <h2>Leaderboard</h2>
-  </div>
-)
-
-const contractAddr = "n1s221Q2vCv1qrYhv9F9TrSTHj8XUVsLuQa"
+const contractAddr = "n1vopYUANXnVg6yFAScKQcrtVN1vgt5Uh4a"
 
 const MyNewTeam = (props) => {
   return (
@@ -41,6 +35,15 @@ const MyNewTeam = (props) => {
 const MyMyTeam = (props) => {
   return (
     <MyTeam 
+      contractAddr={contractAddr}
+      {...props}
+    />
+  );
+}
+
+const MyLeaderboard = (props) => {
+  return (
+    <Leaderboard 
       contractAddr={contractAddr}
       {...props}
     />
@@ -105,7 +108,7 @@ class App extends Component {
          
           <div className="jumbotron">
             <Route exact={true} path="/" component={Home}/>
-            <Route path="/leaderboard" component={Leaderboard}/>
+            <Route path="/leaderboard" component={MyLeaderboard}/>
             <Route path="/createANewTeam" render={MyNewTeam}/>
             <Route path="/myTeam" render={MyMyTeam}/>
           </div>
