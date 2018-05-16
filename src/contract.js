@@ -83,27 +83,28 @@ PoNBContract.prototype = {
     if (contribution.lt(minDeposit)) {
       throw new Error("deposit too low"+ "; contribution: " + contribution + "; minDeposit: " + minDeposit);
     }
-    var bk_height = new BigNumber(Blockchain.block.height);
-    var from = Blockchain.transaction.from;
-    var myMember = this.members.get(from);
-    if (!myMember) {
-      myMember = new NBMember();
-    } 
-
+    
     var prizeMoney = new BigNumber(0);
-    var nbTeam = this.team.get("ponb");
+    var nbTeam = this.team.get("ponb");    
     if (nbTeam.count > 0) {
       prizeMoney = contribution.times(new BigNumber(this.prizeRatio));  
       this._distribute(prizeMoney, nbTeam);
     } 
 
+    var from = Blockchain.transaction.from;
+    var myMember = this.members.get(from);
+    if (!myMember) {
+      myMember = new NBMember();
+      nbTeam.members.push(from);
+      nbTeam.count += 1;
+    } 
     var forMe = contribution.minus(prizeMoney);
     myMember.balance = (new BigNumber(myMember.balance)).plus(forMe);
+    var bk_height = new BigNumber(Blockchain.block.height);
     myMember.expiryHeight = bk_height.plus(height);
+    //myMember.expiryHeight = height;
     this.members.put(from, myMember);
 
-    nbTeam.members.push(from);
-    nbTeam.count += 1;
     nbTeam.balance = (new BigNumber(nbTeam.balance)).plus(contribution);
     this.team.set("ponb", nbTeam);
   },
@@ -133,13 +134,16 @@ PoNBContract.prototype = {
 		}
 
 		if (amount.gt(member.balance)) {
-			throw new Error("Insufficient balance.");
+			throw new Error("Insufficient balance. amount: " + amount + ". balance: " + member.balance);
 		}
 
-		member.balance = member.balance.sub(amount);
+		var mBalance = new BigNumber(member.balance);
+    member.balance = mBalance.minus(amount);
 		this.members.put(from, member);
+
     var theTeam = this.team.get("ponb");
-    theTeam.balance = team.balance.sub(amount);
+    var tBalance = new BigNumber(theTeam.balance)
+    theTeam.balance = tBalance.minus(amount);
     this.team.put("ponb", theTeam);
 
 		var result = Blockchain.transfer(from, amount);

@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
-import { Form, Button } from 'reactstrap';
+import {
+  Row,
+  Card,
+  CardTitle,
+  CardText,
+  Col,
+  Input,
+  Button } from 'reactstrap';
 import NebPay from 'nebpay/nebpay.js';
 import Nebulas from 'nebulas';
+import BigNumber from 'bignumber.js';
 
 class GamePlay extends Component {
   constructor() {
     super();
     this.state = {
-      teamName: '',
-      mgrName: '',
+      inputAmount: 0.01,
+      withdrawAmount: "",
       nebPay: null,
-      nebHeight: 0
+      nebHeight: 0,
+      availBalance: null
     }
   }
   componentWillMount() {
@@ -18,46 +27,97 @@ class GamePlay extends Component {
     var Neb = Nebulas.Neb;
     var neb = new Neb();
     neb.setRequest(new Nebulas.HttpRequest("https://testnet.nebulas.io"));
-    var height = 0;
+    // var height = 0;
     neb.api.getNebState().then((state) => {
-        console.log("= neb state: " + JSON.stringify(state));
-        console.log("= height :" + state.height);
-        height = state.height;
-        this.setState({nebHeight: height});
+        // console.log("= neb state: " + JSON.stringify(state));
+        console.log("==== current height :" + state.height);
+        // height = state.height;
+        // this.setState({nebHeight: height});
     }).catch(function (err) {
         console.log(err);
     })
-    
   }
-  inputTeamNameHandler(event) {
-    this.setState({ teamName: event.target.value});
+  componentDidMount() {
+    var to = this.props.contractAddr;
+    var value = "0";
+    var callFunction = "getMe";
+    var callArgs = "[]"; 
+    this.state.nebPay.simulateCall(to, value, callFunction, callArgs, {
+        listener: this.balanceCallReturn.bind(this)
+    });
   }
-  inputMgrNameHandler(event) {
-    this.setState({ mgrName: event.target.value});
+  balanceCallReturn(resp) {
+    if (resp.result.execute_err === "") {
+      var balance = new BigNumber(JSON.parse(resp.result).balance);
+      // console.log("==balance of this user is: " + balance);
+      balance = balance.dividedBy(new BigNumber("1000000000000000000"));
+      this.setState({availBalance: balance});
+    }
+  }
+
+  inputTeamHandler(event) {
+    this.setState({ inputAmount: event.target.value});
+  }
+  inputWithdrawHandler(event) {
+    this.setState({ withdrawAmount: event.target.value});
   }
   joinTeamHandler() {
     console.log("=state: " + JSON.stringify(this.state));
     console.log("=contract addr: " + this.props.contractAddr);
     //console.log("=nebpay: " + this.state.nebPay);
     var to = this.props.contractAddr;
-    var value = "0.01";
+    var value = this.state.inputAmount;
     var callFunction = "deposit";
-    // var height=
     var callArgs = "[\"" + this.state.nebHeight + "\"]"; 
     this.state.nebPay.call(to, value, callFunction, callArgs, {
-        listener: this.callReturn
+        listener: this.joinCallReturn.bind(this)
     });
   }
-  callReturn(resp) {
-    console.log("=response of deposit: " + JSON.stringify(resp.result));
+  joinCallReturn(resp) {
+    console.log("=response of deposit: " + JSON.stringify(resp));
+    this.setState({inputAmount: 0.01});
   }
-
+  withdrawHandler() {
+    var to = this.props.contractAddr;
+    var value = "0";
+    var callFunction = "withdraw";
+    var amount = (new BigNumber(this.state.withdrawAmount)).times(new BigNumber("1000000000000000000"));
+    console.log("=== withdraw: " + amount);
+    var callArgs = "[\"" + amount + "\"]"; 
+    this.state.nebPay.call(to, value, callFunction, callArgs, {
+        listener: this.withdrawReturn.bind(this)
+    });
+  }
+  withdrawReturn(resp) {
+    console.log("=response of deposit: " + JSON.stringify(resp));
+  }
   render() {
     return (
       <div className='new-team'>
-        <Form>
-          <Button onClick={this.joinTeamHandler.bind(this)}>Pay to Join</Button>
-        </Form>
+        <Row>
+          <Col sm="6">
+            <Card body>
+              <CardTitle>Join the Game!</CardTitle>
+              <CardText>Click the join button below to join. Increase the amount below if you'd like. The unit is in NAS.</CardText>
+              <Input 
+                value={this.state.inputAmount}
+                onChange={this.inputTeamHandler.bind(this)}
+                type="text" name="amount" className="gameInput" placeholder="Minimum 0.01 NAS" />
+              <Button className="gamePlayBtn" onClick={this.joinTeamHandler.bind(this)}>Join!</Button>
+            </Card>
+          </Col>
+          <Col sm="6">
+            <Card body>
+              <CardTitle>Withdraw your NAS</CardTitle>
+              <CardText>You'll be missing out on future earnings. :(</CardText>                    
+              <Input value={this.state.withdrawAmount}
+              onChange={this.inputWithdrawHandler.bind(this)}
+              type="text" name="wamount" className="gameInput" placeholder={this.state.availBalance ? "Max withdraw amount: " + this.state.availBalance + " NAS" : "Amount to withdraw"} />
+
+              <Button className="gamePlayBtn" onClick={this.withdrawHandler.bind(this)}> Submit</Button>
+            </Card>
+          </Col>
+        </Row>
       </div>
     );
   }

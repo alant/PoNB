@@ -1,3 +1,12 @@
 .App {
   text-align: center;
 }
+.jumbotron {
+  height: 400px;
+}
+.gameInput {
+  margin-top: 10px;
+}
+.gamePlayBtn {
+  margin-top: 10px;
+}

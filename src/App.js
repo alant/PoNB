@@ -20,7 +20,9 @@ const Home = () => (
   </div>
 )
 
-const contractAddr = "n21QT3oy5D2cfUe2M1h3ym7JLtsxxm4AKQL"
+const contractAddr = "n1itpEiefzBCX36g3B1TLUNiLVj7ctLfzHs"
+// //production
+// const contractAddr = "n236B5EFnRcWNfZRAFyUUoPQ23w3QrMtEaW"
 
 const MyGamePlay = (props) => {
   return (

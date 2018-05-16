@@ -9,7 +9,8 @@ class Leaderboard extends Component {
     this.state = {
       nebPay: null,
       to: "",//contract address
-      members: []
+      members: [],
+      fetchInProgress: true
     }
   }
   componentWillMount() {
@@ -51,12 +52,11 @@ class Leaderboard extends Component {
         for (var i = 0; i < result.members.length; i++)
         {
           var bigB = new BigNumber(JSON.parse(results[i].result));
-          var bigBDenom = new BigNumber("1000000000000000000");
-          // console.log("=bigB:" + bigB + ", bigBDenom: " + bigBDenom);
           bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
           stateMembers.push({ addr: result.members[i], balance: bigB.toString() });
         }
         this.setState({members: stateMembers});
+        this.setState({fetchInProgress: false});
       });
     });
     
@@ -67,18 +67,22 @@ class Leaderboard extends Component {
     });
     return (
       <div>
-        <span>{"Here you see each person's balance"}</span>
-        <Table>
-          <thead>
-            <tr>
-              <th>Address</th>
-              <th>Balance (NAS)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Members}
-          </tbody>
-        </Table>
+        {
+          this.state.fetchInProgress ?
+            <p> Loading from Nebulas blockchain... </p>
+          :
+            <Table>
+              <thead>
+                <tr>
+                  <th>Address</th>
+                  <th>Balance (NAS)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Members}
+              </tbody>
+            </Table>
+        }
       </div>
     )
   }
