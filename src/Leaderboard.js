@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import NebPay from 'nebpay.js/nebpay.js';
+import NebPay from 'nebpay';
 import { Table } from 'reactstrap';
 import BigNumber from 'bignumber.js';
 
@@ -31,7 +31,7 @@ class Leaderboard extends Component {
     });
   }
   componentDidMount() {
-    console.log("=Leaderboard contract addr: " + this.props.contractAddr);
+    // console.log("=Leaderboard contract addr: " + this.props.contractAddr);
     var value = "0";
     var callFunction = "getTeam";
     var callArgs = "[]";
@@ -47,7 +47,7 @@ class Leaderboard extends Component {
       });
       var promises = Promise.all(pArray);
       promises.then(results => {
-        // console.log("==promiseall:" + JSON.stringify(results));
+        console.log("==promiseall:" + JSON.stringify(results));
         var stateMembers = [];
         for (var i = 0; i < result.members.length; i++)
         {

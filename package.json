@@ -5,11 +5,11 @@
   "dependencies": {
     "bignumber.js": "^7.0.1",
     "bootstrap": "^4.1.1",
-    "nebpay": "git+https://github.com/nebulasio/nebPay.git",
-    "nebpay.js": "git+https://github.com/nebulasio/nebPay.git",
+    "nebpay": "git+https://github.com/Olovorr/nebPay.git",
     "nebulas": "git+https://github.com/nebulasio/neb.js.git",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-ga": "^2.5.2",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
     "reactstrap": "^6.0.1"

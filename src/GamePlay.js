@@ -7,8 +7,8 @@ import {
   Col,
   Input,
   Button } from 'reactstrap';
-import NebPay from 'nebpay/nebpay.js';
-import Nebulas from 'nebulas';
+import NebPay from 'nebpay';
+// import Nebulas from 'nebulas';
 import BigNumber from 'bignumber.js';
 
 class GamePlay extends Component {
@@ -24,18 +24,18 @@ class GamePlay extends Component {
   }
   componentWillMount() {
     this.setState({nebPay: new NebPay()});
-    var Neb = Nebulas.Neb;
-    var neb = new Neb();
-    neb.setRequest(new Nebulas.HttpRequest("https://testnet.nebulas.io"));
-    // var height = 0;
-    neb.api.getNebState().then((state) => {
-        // console.log("= neb state: " + JSON.stringify(state));
-        console.log("==== current height :" + state.height);
-        // height = state.height;
-        // this.setState({nebHeight: height});
-    }).catch(function (err) {
-        console.log(err);
-    })
+    // var Neb = Nebulas.Neb;
+    // var neb = new Neb();
+    // neb.setRequest(new Nebulas.HttpRequest("https://testnet.nebulas.io"));
+    // // var height = 0;
+    // neb.api.getNebState().then((state) => {
+    //     // console.log("= neb state: " + JSON.stringify(state));
+    //     console.log("==== current height :" + state.height);
+    //     // height = state.height;
+    //     // this.setState({nebHeight: height});
+    // }).catch(function (err) {
+    //     console.log(err);
+    // })
   }
   componentDidMount() {
     var to = this.props.contractAddr;
@@ -47,9 +47,8 @@ class GamePlay extends Component {
     });
   }
   balanceCallReturn(resp) {
-    if (resp.result.execute_err === "") {
+    if (resp.execute_err === "") {
       var balance = new BigNumber(JSON.parse(resp.result).balance);
-      // console.log("==balance of this user is: " + balance);
       balance = balance.dividedBy(new BigNumber("1000000000000000000"));
       this.setState({availBalance: balance});
     }
@@ -62,8 +61,8 @@ class GamePlay extends Component {
     this.setState({ withdrawAmount: event.target.value});
   }
   joinTeamHandler() {
-    console.log("=state: " + JSON.stringify(this.state));
-    console.log("=contract addr: " + this.props.contractAddr);
+    // console.log("=state: " + JSON.stringify(this.state));
+    // console.log("=contract addr: " + this.props.contractAddr);
     //console.log("=nebpay: " + this.state.nebPay);
     var to = this.props.contractAddr;
     var value = this.state.inputAmount;
@@ -74,7 +73,7 @@ class GamePlay extends Component {
     });
   }
   joinCallReturn(resp) {
-    console.log("=response of deposit: " + JSON.stringify(resp));
+    // console.log("=response of deposit: " + JSON.stringify(resp));
     this.setState({inputAmount: 0.01});
   }
   withdrawHandler() {
@@ -82,14 +81,14 @@ class GamePlay extends Component {
     var value = "0";
     var callFunction = "withdraw";
     var amount = (new BigNumber(this.state.withdrawAmount)).times(new BigNumber("1000000000000000000"));
-    console.log("=== withdraw: " + amount);
+    // console.log("=== withdraw: " + amount);
     var callArgs = "[\"" + amount + "\"]"; 
     this.state.nebPay.call(to, value, callFunction, callArgs, {
         listener: this.withdrawReturn.bind(this)
     });
   }
   withdrawReturn(resp) {
-    console.log("=response of deposit: " + JSON.stringify(resp));
+    // console.log("=response of deposit: " + JSON.stringify(resp));
   }
   render() {
     return (
@@ -112,7 +111,7 @@ class GamePlay extends Component {
               <CardText>You'll be missing out on future earnings. :(</CardText>                    
               <Input value={this.state.withdrawAmount}
               onChange={this.inputWithdrawHandler.bind(this)}
-              type="text" name="wamount" className="gameInput" placeholder={this.state.availBalance ? "Max withdraw amount: " + this.state.availBalance + " NAS" : "Amount to withdraw"} />
+              type="text" name="wamount" className="gameInput" placeholder={this.state.availBalance ? "Available amount: " + this.state.availBalance + " NAS" : "Amount to withdraw"} />
 
               <Button className="gamePlayBtn" onClick={this.withdrawHandler.bind(this)}> Submit</Button>
             </Card>

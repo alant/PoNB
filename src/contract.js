@@ -46,24 +46,23 @@ var PoNBContract = function () {
     }
   });
   LocalContractStorage.defineMapProperty(this, "team", {
-    parse: function (text) {
-      return new NBTeam(text);
-    },
     stringify: function (o) {
       return o.toString();
+    },
+    parse: function (text) {
+      return new NBTeam(text);
     }
   });
   LocalContractStorage.defineMapProperty(this, "members", {
-    parse: function (text) {
-      return new NBMember(text);
-    },
     stringify: function (o) {
       return o.toString();
+    },
+    parse: function (text) {
+      return new NBMember(text);
     }
   });
 
   LocalContractStorage.defineProperties(this, {
-    daBoss: null,
     prizeRatio: null
   });
 };
@@ -72,12 +71,10 @@ PoNBContract.prototype = {
   init: function () {
     this.gameConfig.put("minDeposit", "10000000000000000");// 0.01 NAS;
     this.team.put("ponb", new NBTeam());
-
-    this.daBoss = "n1UziJREeLNgTQPDK8AAfZdutJdBvHVhXQ5";
     this.prizeRatio = 0.1;
   },
   deposit: function (height) {
-    var contribution = Blockchain.transaction.value;
+    var contribution = new BigNumber(Blockchain.transaction.value);
     var minDeposit = this.gameConfig.get("minDeposit");
     // throw new Error("contribution: " + contribution + "minDeposit: " + minDeposit);
     if (contribution.lt(minDeposit)) {
@@ -171,16 +168,6 @@ PoNBContract.prototype = {
   getBalance: function (addr) {
     var member = this.members.get(addr);
     return member.balance;
-  },
-  getBalances: function() {
-    var theTeam = this.team.get("ponb");
-    var members = theTeam.members;
-    var result = [];
-    members.forEach((member) => {
-      var theBalance = this.getBalance(member);
-      result.push({addr: member, balance: theBalance});
-    });
-    return result;
   }
 };
 
