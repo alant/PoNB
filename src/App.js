@@ -14,11 +14,6 @@ import {
 import { Link, Route } from 'react-router-dom';
 import GamePlay from './GamePlay';
 import Leaderboard from './Leaderboard';
-import ReactGA from 'react-ga';
-
-function fireTracking() {
-    ReactGA.pageview(window.location.hash);
-}
 
 class App extends Component {
   constructor() {
@@ -28,7 +23,6 @@ class App extends Component {
       isOpen: false,
       extensionAvail: false
     }
-    ReactGA.initialize('UA-119420035-1');
   }
   toggle() {
     this.setState({
@@ -172,12 +166,12 @@ class App extends Component {
             </Collapse>
           </Navbar>
           <div className="jumbotron" id="myJumbotron">
-            <Route onUpdate={fireTracking} exact={true} path="/" render={MyHome}/>
+            <Route exact={true} path="/" render={MyHome}/>
             {this.state.extensionAvail && (
-              <Route onUpdate={fireTracking} path="/leaderboard" render={MyLeaderboard}/>)}
+              <Route path="/leaderboard" render={MyLeaderboard}/>)}
             {this.state.extensionAvail && (
-              <Route onUpdate={fireTracking} path="/gamePlay" render={MyGamePlay}/>)}
-            <Route onUpdate={fireTracking} path="/about" component={About}/>
+              <Route path="/gamePlay" render={MyGamePlay}/>)}
+            <Route path="/about" component={About}/>
           </div>
           <footer>
             <Row>
