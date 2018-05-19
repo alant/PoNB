@@ -79,8 +79,17 @@ class App extends Component {
             As the name Proof of Niubility or <b>PoNB</b> suggests, this is a game built on Nebulas blockchain (NAS) inspired by Proof of Weak Hands and many other PoXX spinoffs based on ETH. 
             Currently, the minimum buy in is 0.01 NAS. 10% of what's put in get distributed propotionally to the balance one has in the game. That's it!
           </p>
-          <p>Click “<Link to="/gamePlay">Play The Game</Link>" on top right corner to give PoNB a try and you too can be proven to be 牛逼!</p>
-          <p>这是一个基于星云（Nebulas）的小游戏，进入游戏的方法是点击右上角的 “<Link to="/gamePlay">Play The Game</Link>"。 最小投入 0.01 NAS。 投入以后，在您后面进入游戏的玩家投入的 10% 会根据您的余额在游戏里的占比分配给您。您就牛逼了！Proof of Niubility!</p>
+          {
+            props.extensionAvail && (
+              <p>Click “<Link to="/gamePlay">Play The Game</Link>" on top right corner to give PoNB a try and you too can be proven to be 牛逼!</p>
+          )}
+          <p>这是一个基于星云（Nebulas）的小游戏，玩法和以太坊上的 PoWH 相似。 
+            具体规则是：最小投入 0.01 NAS。 投入以后，在您后面进入游戏的玩家投入的 10% 会根据您的余额在游戏里的占比分配给您。您就牛逼了！Proof of Niubility!
+          </p>
+          {
+            props.extensionAvail && (
+              <p> 进入游戏的方法是点击右上角的 ”<Link to="/gamePlay">Play The Game</Link>"。 </p>
+          )}          
         </div>
       );
     } 
