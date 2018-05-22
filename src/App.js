@@ -177,7 +177,7 @@ class App extends Component {
             <Row>
               <Col sm="12" md="12" lg="12">
                 <p className="align-self-center">
-                  Made with &lt;3 by <a href="http://ahtang.com">Alan 汤包</a>
+                  Made with &#10084; by <a href="http://ahtang.com">Alan 汤包</a>
                 </p>
               </Col>
             </Row>
