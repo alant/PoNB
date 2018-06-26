@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import NebPay from 'nebpay';
 import { Table } from 'reactstrap';
-import BigNumber from 'bignumber.js';
 
 class Leaderboard extends Component {
   constructor() {
@@ -21,11 +20,13 @@ class Leaderboard extends Component {
     return new Promise((resolve, reject) => {
       this.state.nebPay.simulateCall(to, value, callFunction, callArgs, {
         listener: (resp) => {
-          if (resp == null || resp.execute_err !== "") {
-            reject(Error("promiseSimulateCall broke"));
-          } else {
-            resolve(resp);
-          }
+          console.log("====>" + JSON.stringify(resp));
+          // if (resp == null || resp.execute_err !== "") {
+          //   reject(Error("promiseSimulateCall broke"));
+          // } else {
+          //   resolve(resp);
+          // }
+          resolve(resp);
         }
       });
     });
@@ -51,8 +52,8 @@ class Leaderboard extends Component {
         var stateMembers = [];
         for (var i = 0; i < result.members.length; i++)
         {
-          var bigB = new BigNumber(JSON.parse(results[i].result));
-          bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
+          var bigB = JSON.parse(results[i].result) / (10**18);
+          // bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
           stateMembers.push({ addr: result.members[i], balance: bigB.toString() });
         }
         this.setState({members: stateMembers});
