@@ -55,14 +55,17 @@ class Leaderboard extends Component {
           var promises = Promise.all(pArray);
           promises.then((results) => {
             var stateMembers = [];
+            console.log('==promiseall:' + JSON.stringify(results));
             for (var i = 0; i < result.members.length; i++) {
-              console.log('==promiseall:' + JSON.stringify(results[i]));
-              var bigB = JSON.parse(results[i].result) / 10 ** 18;
-              // bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
-              stateMembers.push({
-                addr: result.members[i],
-                balance: bigB.toString()
-              });
+              console.log(`result: ${i} ${result[i]}`);
+              if (result) {
+                var bigB = parseFloat((parseInt(JSON.parse(results[i].result), 10) / 10 ** 18).toFixed(6));
+                // bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
+                stateMembers.push({
+                  addr: result.members[i],
+                  balance: bigB.toString()
+                });
+              }
             }
             this.setState({ members: stateMembers });
             this.setState({ fetchInProgress: false });
