@@ -58,7 +58,7 @@ class Leaderboard extends Component {
             console.log('==promiseall:' + JSON.stringify(results));
             for (var i = 0; i < result.members.length; i++) {
               console.log(`result: ${i} ${result[i]}`);
-              if (result) {
+              if (results[i] && results[i].result) {
                 var bigB = parseFloat((parseInt(JSON.parse(results[i].result), 10) / 10 ** 18).toFixed(6));
                 // bigB = bigB.dividedBy(new BigNumber("1000000000000000000"));
                 stateMembers.push({
